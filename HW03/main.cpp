@@ -59,7 +59,11 @@ Thread t;
 
 Timer timer_fast;
 
+Ticker time_up;
 
+int done=0;
+
+int i;
 
 int m_addr = FXOS8700CQ_SLAVE_ADDR1;
 
@@ -69,12 +73,16 @@ void FXOS8700CQ_readRegs(int addr, uint8_t * data, int len);
 void FXOS8700CQ_writeRegs(uint8_t * data, int len);
 
 
+
 void info(){
-    led=1;
-    for(int i=0;i<100;i++){
+    
+
+    for(i=0;i<100;i++){
     // pc.baud(115200);
 
-
+    if(i%10==0)
+    led=!led;
+    else led=led;
    uint8_t who_am_i, data[2], res[6];
 
    int16_t acc16;
@@ -141,13 +149,13 @@ void info(){
         
 
 }
-    led=0;
+    led=1;
 }
 
 void ISR1(){
 
     
-
+    
     queue.call(info);
 
     
@@ -156,11 +164,13 @@ void ISR1(){
 }
 
 
+
 int main() {
     t.start(callback(&queue, &EventQueue::dispatch_forever));
 
 
     button.rise(&ISR1);
+
    
 
      
